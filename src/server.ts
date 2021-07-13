@@ -24,7 +24,7 @@ const dbPort: any = process.env.DB_PORT;
 const dbUsername: string = process.env.DB_USERNAME;
 const dbPassword: string = process.env.DB_PASSWORD;
 const kafkaHost: string = process.env.KAFKA_HOST;
-const apmUrl: string = process.env.APM_SERVER;
+const apmUrl: string = process.env.APM_URL;
 
 var apm = apmServer.start({
     // Override service name from package.json
@@ -32,6 +32,7 @@ var apm = apmServer.start({
 
     // Set custom APM Server URL (default: http://localhost:8200)
     serverUrl: apmUrl,
+    environment: 'development'
 });
 
 export const createServer = () => new Promise((resolve, reject) => {
@@ -86,14 +87,14 @@ export const createServer = () => new Promise((resolve, reject) => {
         dir: path.join(__dirname, 'modules/routes')
     });
 
-    server.get('/', async (request, reply) => {
-        return {
-            hello: 'world'
-        };
-    });
+    // server.get('/', async (request, reply) => {
+    //     return {
+    //         hello: 'world'
+    //     };
+    // });
 
     //apm 
-    server.decorate('apm', apmServer);
+    server.decorate('apm', apm);
     
     //-----------------------------------------------------
     // decorators

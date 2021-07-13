@@ -53,12 +53,13 @@ const dbPort = process.env.DB_PORT;
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
 const kafkaHost = process.env.KAFKA_HOST;
-const apmUrl = process.env.APM_SERVER;
+const apmUrl = process.env.APM_URL;
 var apm = elastic_apm_node_1.default.start({
     // Override service name from package.json
     serviceName: 'apm-server',
     // Set custom APM Server URL (default: http://localhost:8200)
     serverUrl: apmUrl,
+    environment: 'development'
 });
 const createServer = () => new Promise((resolve, reject) => {
     const server = fastify_1.fastify({
@@ -106,13 +107,13 @@ const createServer = () => new Promise((resolve, reject) => {
     server.register(fastify_autoload_1.default, {
         dir: path.join(__dirname, 'modules/routes')
     });
-    server.get('/', (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-        return {
-            hello: 'world'
-        };
-    }));
+    // server.get('/', async (request, reply) => {
+    //     return {
+    //         hello: 'world'
+    //     };
+    // });
     //apm 
-    server.decorate('apm', elastic_apm_node_1.default);
+    server.decorate('apm', apm);
     //-----------------------------------------------------
     // decorators
     server.decorate('conf', { port, dbDialect, db, dbHost, dbPort, dbUsername, dbPassword, kafkaHost });

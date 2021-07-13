@@ -19,6 +19,15 @@ exports.default = fastify_plugin_1.default((server, opts, next) => {
                         data,
                     });
                 }).catch(err => {
+                    const { message, stack } = err;
+                    let errorMsg = {
+                        method: request.routerMethod,
+                        path: request.routerPath,
+                        param: request.body,
+                        message,
+                        stack
+                    };
+                    server.apm.captureError(JSON.stringify(errorMsg));
                     return reply.code(400).send({
                         success: false,
                         message: 'Error in insert new record',
@@ -27,13 +36,30 @@ exports.default = fastify_plugin_1.default((server, opts, next) => {
                 });
             }
             else {
+                const message = 'Insert failed! Please check the request';
+                let errorMsg = {
+                    method: request.routerMethod,
+                    path: request.routerPath,
+                    param: request.body,
+                    message,
+                };
+                server.apm.captureError(JSON.stringify(errorMsg));
                 return reply.code(400).send({
                     success: false,
-                    message: 'Insert failed! Please check the request'
+                    message
                 });
             }
         }
         catch (error) {
+            const { message, stack } = error;
+            let errorMsg = {
+                method: request.routerMethod,
+                path: request.routerPath,
+                param: request.body,
+                message,
+                stack
+            };
+            server.apm.captureError(JSON.stringify(errorMsg));
             request.log.error(error);
             return reply.send(400);
         }
