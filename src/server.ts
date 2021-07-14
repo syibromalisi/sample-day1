@@ -109,7 +109,7 @@ export const createServer = () => new Promise((resolve, reject) => {
     // plugin
     server.register(dbPlugin);
     server.register(kafkaPlugin);
-    server.register(authPlugin);
+    // server.register(authPlugin);
 
     //-----------------------------------------------------
     server.addHook('onRequest', async (request, reply, error) => {

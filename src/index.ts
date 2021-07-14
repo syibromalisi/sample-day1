@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import { KafkaMonitor } from './modules/services/kafkaService';
 import { createServer } from './server'
 
 createServer()
@@ -7,6 +7,10 @@ createServer()
 
         server.kafkaClient.on('ready', () => {
             server.log.info('Kafka Client Connection has been established successfully.');
+
+            // running kafka monitor
+            const kafkaMonitor = new KafkaMonitor(server);
+            kafkaMonitor.subscribeTopicBook();
         });
 
         server.kafkaClient.on('error', (err) => {
@@ -19,6 +23,7 @@ createServer()
         } else {
             server.log.info('Server not connected to APM Server');
         }
+
 
     }).catch(error => {
         // do something

@@ -4,16 +4,18 @@ import Sequelize from 'sequelize';
 import { UserTO, GetUserTO } from './schema';
 import { UserFactory, UsersAttributes } from '../../../plugins/db/models/users';
 
-import { insert } from '../../services/user-service'
+import { UserService } from '../../services/userService'
 
 export default fp((server, opts, next) => {
 
     server.post("/user/model/insert", { schema: UserTO }, (request, reply) => {
         try {
+            const userService = new UserService(server.db);
+
             const { username, password } = request.body;
 
             if (username && password) {
-                insert(server, request.body).then(data => {
+                userService.insert(request.body).then(data => {
                     return reply.code(200).send({
                         success: true,
                         message: 'Insert successful!',
