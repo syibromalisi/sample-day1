@@ -2,6 +2,7 @@ import { fastify } from 'fastify';
 import fastifyBlipp from "fastify-blipp";
 import fastifySwagger from "fastify-swagger";
 import AutoLoad from "fastify-autoload";
+import fastifyJwt from "fastify-jwt";
 
 import apmServer from 'elastic-apm-node';
 import * as path from "path";
@@ -9,6 +10,7 @@ import * as dotenv from 'dotenv';
 
 import dbPlugin from './plugins/db';
 import kafkaPlugin from './plugins/kafka';
+import authPlugin from './plugins/auth';
 
 dotenv.config({
     path: path.resolve('.env'),
@@ -16,6 +18,7 @@ dotenv.config({
 
 // configuration
 const port: any = process.env.PORT;
+const secretKey: string = process.env.SECRET;
 
 const dbDialect: string = process.env.DB_DIALECT;
 const db: string = process.env.DB;
@@ -82,6 +85,9 @@ export const createServer = () => new Promise((resolve, reject) => {
         exposeRoute: true
     });
 
+    // jwt
+    server.register(fastifyJwt, { secret: secretKey })
+
     // auto register all routes 
     server.register(AutoLoad, {
         dir: path.join(__dirname, 'modules/routes')
@@ -95,7 +101,7 @@ export const createServer = () => new Promise((resolve, reject) => {
 
     //apm 
     server.decorate('apm', apm);
-    
+
     //-----------------------------------------------------
     // decorators
     server.decorate('conf', { port, dbDialect, db, dbHost, dbPort, dbUsername, dbPassword, kafkaHost });
@@ -103,6 +109,7 @@ export const createServer = () => new Promise((resolve, reject) => {
     // plugin
     server.register(dbPlugin);
     server.register(kafkaPlugin);
+    server.register(authPlugin);
 
     //-----------------------------------------------------
     server.addHook('onRequest', async (request, reply, error) => {

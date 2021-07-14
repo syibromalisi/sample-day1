@@ -6,6 +6,13 @@ const kafkaConfig = (server): KafkaClientOptions => ({
     reconnectOnIdle: true,
 });
 
+const kafkaConfigTest = (server): KafkaClientOptions => ({
+    kafkaHost: server.conf.kafkaHost,
+    autoConnect: true,
+    reconnectOnIdle: true,
+});
+
 export {
-    kafkaConfig
+    kafkaConfig,
+    kafkaConfigTest
 }
