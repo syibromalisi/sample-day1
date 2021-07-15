@@ -1,5 +1,6 @@
-import { KafkaMonitor } from './modules/services/kafkaService';
 import { createServer } from './server'
+import { KafkaMonitor } from './modules/services/kafkaService';
+import { JobUser } from './modules/services/jobUser'
 
 createServer()
     .then((server: any) => {
@@ -24,6 +25,8 @@ createServer()
             server.log.info('Server not connected to APM Server');
         }
 
+        const job = new JobUser(server.db);
+        server.scheduler.scheduler.addSimpleIntervalJob(job.jobInsertUser);
 
     }).catch(error => {
         // do something

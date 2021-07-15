@@ -47,23 +47,22 @@ const dbPlugin = (async (server, opts, next) => {
     });
 
     server.log.info('Checking Connection.');
-    server.db
-        .authenticate()
-        .then(async () => {
-            server.log.info('Database Connection has been established successfully.');
+    const authDB = await server.db.authenticate();
+    // server.log.info(authDB);
+    if (authDB) {
+        server.apm.captureError({
+            method: "Connecting to database",
+            error: authDB,
         })
-        .catch(err => {
-            server.apm.captureError({
-                method: "Connecting to database",
-                error: err,
-            })
 
-            // server.log.error('Unable to connect to the database:', err);
-        });
+        server.log.error('Unable to connect to the database:', authDB);
+    }
+    server.log.info('Database Connection has been established successfully.');
+    // next();
 
     // const skill = SkillsFactory(dbSequelize);
     // const users = UserFactory(dbSequelize);
-        
+
     // server.db.sync();
 
 });

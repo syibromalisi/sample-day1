@@ -3,6 +3,7 @@ import fastifyBlipp from "fastify-blipp";
 import fastifySwagger from "fastify-swagger";
 import AutoLoad from "fastify-autoload";
 import fastifyJwt from "fastify-jwt";
+import fastifySchedule from 'fastify-schedule'
 
 import apmServer from 'elastic-apm-node';
 import * as path from "path";
@@ -88,16 +89,19 @@ export const createServer = () => new Promise((resolve, reject) => {
     // jwt
     server.register(fastifyJwt, { secret: secretKey })
 
+    // scheduler
+    server.register(fastifySchedule);
+
     // auto register all routes 
     server.register(AutoLoad, {
         dir: path.join(__dirname, 'modules/routes')
     });
 
-    // server.get('/', async (request, reply) => {
-    //     return {
-    //         hello: 'world'
-    //     };
-    // });
+    server.get('/', async (request, reply) => {
+        return {
+            hello: 'world'
+        };
+    });
 
     //apm 
     server.decorate('apm', apm);
@@ -110,6 +114,7 @@ export const createServer = () => new Promise((resolve, reject) => {
     server.register(dbPlugin);
     server.register(kafkaPlugin);
     // server.register(authPlugin);
+
 
     //-----------------------------------------------------
     server.addHook('onRequest', async (request, reply, error) => {
