@@ -43,7 +43,7 @@ const users = {
 
 export const UserFactory = (sequalize: Sequelize): UserStatic => {
     const attributes = users;
-    return <UserStatic>sequalize.define("Users", attributes, {
+    const model = <UserStatic>sequalize.define("Users", attributes, {
         // don't add the timestamp attributes (updatedAt, createdAt)
         timestamps: true,
 
@@ -53,5 +53,9 @@ export const UserFactory = (sequalize: Sequelize): UserStatic => {
         // If don't want updatedAt
         updatedAt: false,
     });
+
+    model.sync();
+
+    return model;
 };
 

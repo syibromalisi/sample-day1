@@ -32,7 +32,7 @@ const apmUrl: string = process.env.APM_URL;
 
 var apm = apmServer.start({
     // Override service name from package.json
-    serviceName: 'apm-server',
+    serviceName: 'apm-server-sample',
 
     // Set custom APM Server URL (default: http://localhost:8200)
     serverUrl: apmUrl,

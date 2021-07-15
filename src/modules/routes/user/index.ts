@@ -7,13 +7,12 @@ import { UserFactory, UsersAttributes } from '../../../plugins/db/models/users';
 import { UserService } from '../../services/userService'
 
 export default fp((server, opts, next) => {
+    const userService = new UserService(server.db);
 
     server.post("/user/model/insert", { schema: UserTO }, (request, reply) => {
         try {
-            const userService = new UserService(server.db);
 
             const { username, password } = request.body;
-
             if (username && password) {
                 userService.insert(request.body).then(data => {
                     return reply.code(200).send({

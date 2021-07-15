@@ -26,7 +26,7 @@ createServer()
         }
 
         const job = new JobUser(server.db);
-        server.scheduler.scheduler.addSimpleIntervalJob(job.jobInsertUser);
+        server.scheduler.addSimpleIntervalJob(job.jobInsertUser);
 
     }).catch(error => {
         // do something
